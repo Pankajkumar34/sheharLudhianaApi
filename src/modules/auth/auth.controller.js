@@ -17,7 +17,7 @@ exports.googleCallback = async (req, res, next) => {
     });
 
     return res.redirect(
-      `http://localhost:8080/auth-success?token=${accessToken}`
+     `${process.env.BASE_URL}/auth-success?token=${accessToken}`
     );
 
   } catch (error) {
