@@ -18,7 +18,7 @@ connectDB();
 app.use(passport.initialize());
 
 app.use(cors({
-    origin: "http://localhost:8080",
+    origin:["http://localhost:8080","https://sheharludhiana.com","www.sheharludhiana.com"],
     credentials: true
 }));
 app.use(fileUpload());
