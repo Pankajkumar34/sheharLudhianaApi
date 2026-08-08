@@ -33,6 +33,11 @@ const businessSchema = new mongoose.Schema(
       match: [/^\d{10}$/, "Please enter a valid 10-digit whatsapp number"],
       default: "",
     },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    keywords: [String],
     email: {
       type: String,
       lowercase: true,
@@ -108,5 +113,5 @@ const businessSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+businessSchema.index({ location: "2dsphere" });
 module.exports = new mongoose.model("Business", businessSchema)

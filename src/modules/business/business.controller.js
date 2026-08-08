@@ -126,6 +126,139 @@ exports.myBusinesses = async (req, res) => {
     }
 };
 
+exports.getNearbyBusinesses = async (req, res) => {
+  try {
+    const {
+      longitude,
+      latitude,
+      radius = 5,
+      search,
+      category,
+      area,
+      isVerified = "true",
+    } = req.query;
+
+    // -------------------------
+    // Validate location
+    // -------------------------
+    if (!longitude || !latitude) {
+      return res.status(400).json({
+        success: false,
+        message: "Longitude and latitude are required",
+      });
+    }
+
+    const lng = Number(longitude);
+    const lat = Number(latitude);
+    const radiusKm = Number(radius);
+
+    if (
+      Number.isNaN(lng) ||
+      Number.isNaN(lat) ||
+      lng < -180 ||
+      lng > 180 ||
+      lat < -90 ||
+      lat > 90
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid longitude or latitude",
+      });
+    }
+
+    if (Number.isNaN(radiusKm) || radiusKm <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid radius",
+      });
+    }
+
+    // -------------------------
+    // Build filters
+    // -------------------------
+    const filter = {
+      isVerified: isVerified === "true",
+    };
+
+    // Category filter
+    if (category) {
+      filter.category = category;
+    }
+
+    // Area filter
+    if (area) {
+      filter.area = {
+        $regex: area,
+        $options: "i",
+      };
+    }
+
+    // Search business name, description,
+    // area and keywords
+    if (search) {
+      filter.$or = [
+        {
+          businessName: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          description: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          area: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          keywords: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ];
+    }
+
+    // -------------------------
+    // Nearby businesses
+    // -------------------------
+    const businesses = await businessModel
+      .find({
+        ...filter,
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [lng, lat],
+            },
+            $maxDistance: radiusKm * 1000,
+          },
+        },
+      })
+      .populate("category", "name")
+      .select("-__v");
+
+    return res.status(200).json({
+      success: true,
+      count: businesses.length,
+      radius: `${radiusKm} KM`,
+      data: businesses,
+    });
+  } catch (error) {
+    console.error("Nearby business error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch nearby businesses",
+      error: error.message,
+    });
+  }
+};
 exports.getBusinessById = async (req, res) => {
   try {
     const { id } = req.params;

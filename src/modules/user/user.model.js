@@ -2,9 +2,14 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
-    
+
   {
-    isProfileCompleted:{type:Boolean,default:false},
+    subscriptionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subscription",
+      default: null
+    },
+    isProfileCompleted: { type: Boolean, default: false },
     fullName: {
       type: String,
       required: true,
@@ -42,6 +47,8 @@ const userSchema = new mongoose.Schema(
         "BUSINESS_OWNER",
         "ADMIN",
         "SUPER_ADMIN",
+        "STUDENT",
+        "OTHER"
       ],
       default: "USER",
     },
