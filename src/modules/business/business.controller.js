@@ -236,7 +236,7 @@ exports.getNearbyBusinesses = async (req, res) => {
               type: "Point",
               coordinates: [lng, lat],
             },
-            $maxDistance: radiusKm * 1000,
+            $maxDistance: Number(radiusKm) * 1000,
           },
         },
       })
