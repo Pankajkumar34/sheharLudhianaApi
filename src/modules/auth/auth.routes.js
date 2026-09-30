@@ -32,5 +32,8 @@ router.get(
 );
 
 router.get("/profile", authenticate, authController.getProfile);
+router.post("/send-otp",  authController.sendOtp);
+router.post("/otp-login",  authController.verifyLoginOtp);
+
 
 module.exports = router;

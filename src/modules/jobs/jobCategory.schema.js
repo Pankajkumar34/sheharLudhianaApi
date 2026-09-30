@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-const jobTypeSchema = new mongoose.Schema(
+const jobCategorySchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Job type name is required"],
+      required: true,
       trim: true,
       unique: true,
-      maxlength: [100, "Job type name cannot exceed 100 characters"],
+      maxlength: 100,
     },
 
     slug: {
@@ -20,11 +20,16 @@ const jobTypeSchema = new mongoose.Schema(
 
     description: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     icon: {
+      type: String,
+      default: "",
+    },
+
+    image: {
       type: String,
       default: "",
     },
@@ -44,17 +49,17 @@ const jobTypeSchema = new mongoose.Schema(
   }
 );
 
-jobTypeSchema.index({
+jobCategorySchema.index({
   name: "text",
   description: "text",
 });
 
-jobTypeSchema.index({
+jobCategorySchema.index({
   isActive: 1,
   sortOrder: 1,
 });
 
 module.exports = mongoose.model(
-  "JobType",
-  jobTypeSchema
+  "JobCategory",
+  jobCategorySchema
 );

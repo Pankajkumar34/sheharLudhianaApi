@@ -11,7 +11,8 @@ const fileUpload = require('express-fileupload');
 const connectDB = require("./src/config/db");
 
 const app = express();
-const port =5000;
+const port =4000;
+
 
 connectDB();
 
